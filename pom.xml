@@ -28,6 +28,7 @@
     <distro.openmrsmodulesDir>${distro.baseDir}/openmrs_modules</distro.openmrsmodulesDir>
     <distro.bahmnireportsDir>${distro.baseDir}/bahmni_reports</distro.bahmnireportsDir>
     <distro.openerpatomfeedserviceDir>${distro.baseDir}/openerp_atomfeed_service</distro.openerpatomfeedserviceDir>
+    <fhir2.version>1.7.0</fhir2.version>
 
     <!-- EIP override properties -->
     <db-event.destinations>direct:odoo-event-listener</db-event.destinations>
@@ -94,7 +95,7 @@
 
     <!-- Ozone -->
     <distro.ozoneTempConfigDir>${distro.baseDir}/ozone_config_temp</distro.ozoneTempConfigDir>
-    <ozoneConfigVersion>1.0.0-beta2</ozoneConfigVersion>
+    <ozoneConfigVersion>1.0.0-SNAPSHOT</ozoneConfigVersion>
 
   </properties>
 
@@ -336,6 +337,12 @@
       <version>${priceRecalculationVersion}</version>
       <type>zip</type>
     </dependency>
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>fhir2-omod</artifactId>
+      <version>${fhir2.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
   </dependencies>
 
@@ -503,8 +510,6 @@
               <target>
                 <copy todir="${distro.baseDir}/eip_config">
                   <fileset dir="${distro.ozoneTempConfigDir}/eip_config">
-                    <exclude name="**/config/senaite-config/**" />
-                    <exclude name="**/routes/senaite/**" />
                   </fileset>
                 </copy>
               </target>
@@ -576,27 +581,6 @@
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>com.atlassian.maven.plugins</groupId>
-        <artifactId>bash-maven-plugin</artifactId>
-        <version>1.0.0</version>
-        <executions>
-          <execution>
-            <id>test</id>
-            <phase>package</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <script>
-              sed -i "s/\(db-event\.destinations=\).*\$/\1${db-event.destinations}/" ${distro.baseDir}/eip_config/config/application.properties
-              sed -i "s/\(create\.customer\.if\.not\.exist=\).*\$/\1${create.customer.if.not.exist}/" ${distro.baseDir}/eip_config/config/odoo-config/application.properties
-              sed -i "s/\(openmrs\.identifier\.type\.uuid=\).*\$/\1${openmrs.identifier.type.uuid}/" ${distro.baseDir}/eip_config/config/application.properties
-            </script>
-        </configuration>
-      </plugin>
 
       <!-- packaging the distro as a installable/deployable file -->
        <plugin>
